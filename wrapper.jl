@@ -15,7 +15,7 @@ function make_zero!(a::StridedMatrix{Float64})
   return a
 end
 
-function mult!(c::T, a::T, b::T) where {T<:StridedMatrix{<:Float64}}
+function mult!(c::T, a::T, b::T; nthreads::Integer=Base.Threads.nthreads()) where {T<:StridedMatrix{<:Float64}}
   (size(a)[2] == size(b)[1]) || throw(DimensionMismatch("a versus b"))
   (size(c) == (size(a)[1], size(b)[2])) || throw(DimensionMismatch("c versus a and b"))
 
@@ -38,6 +38,7 @@ function mult!(c::T, a::T, b::T) where {T<:StridedMatrix{<:Float64}}
       Culonglong,
       Culonglong,
       Culonglong,
+      Culong,
     ),
     c,
     size(c)[1],
@@ -53,7 +54,8 @@ function mult!(c::T, a::T, b::T) where {T<:StridedMatrix{<:Float64}}
     size(b)[1],
     size(b)[2],
     strides(b)[1],
-    strides(b)[2]
+    strides(b)[2],
+    nthreads
   )
 
   return c

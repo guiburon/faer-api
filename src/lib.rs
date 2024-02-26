@@ -1,11 +1,6 @@
 use faer::modules::core::mul::matmul;
-use faer::{mat, Mat, Parallelism};
+use faer::{mat, Parallelism};
 use std::usize;
-
-use faer::{
-    modules::core::reborrow::{Reborrow, ReborrowMut},
-    MatMut, MatRef,
-};
 
 #[no_mangle]
 pub unsafe extern "C" fn make_zero(
@@ -47,6 +42,7 @@ pub unsafe extern "C" fn mult(
     b_ncols: u64,
     b_row_stride: u64,
     b_col_stride: u64,
+    nthreads: u32,
 ) {
     assert!(!c_ptr.is_null());
     assert!(!a_ptr.is_null());
@@ -82,52 +78,5 @@ pub unsafe extern "C" fn mult(
         )
     };
 
-    matmul(c, a, b, None, 1.0, Parallelism::None);
+    matmul(c, a, b, None, 1.0, Parallelism::Rayon(nthreads as usize));
 }
-
-// #[no_mangle]
-// pub unsafe extern "C" fn add(
-//     c_ptr: *mut f64,
-//     a_ptr: *const f64,
-//     b_ptr: *const f64,
-//     nrows: u64,
-//     ncols: u64,
-//     row_stride: u64,
-//     col_stride: u64,
-// ) {
-//     assert!(!c_ptr.is_null());
-//     assert!(!a_ptr.is_null());
-//     assert!(!b_ptr.is_null());
-//
-//     let mut c = unsafe {
-//         faer::mat::from_raw_parts_mut::<f64>(
-//             c_ptr,
-//             nrows as usize,
-//             ncols as usize,
-//             row_stride as isize,
-//             col_stride as isize,
-//         )
-//     };
-//
-//     let a = unsafe {
-//         faer::mat::from_raw_parts::<f64>(
-//             a_ptr,
-//             nrows as usize,
-//             ncols as usize,
-//             row_stride as isize,
-//             col_stride as isize,
-//         )
-//     };
-//
-//     let b = unsafe {
-//         faer::mat::from_raw_parts::<f64>(
-//             b_ptr,
-//             nrows as usize,
-//             ncols as usize,
-//             row_stride as isize,
-//             col_stride as isize,
-//         )
-//     };
-//     faer::zipped!(&mut c.rb_mut(), a.rb(), b.rb())
-//         .for_each(|faer::unzipped!(c, a, b)| *c = *a + *b);
-// }
