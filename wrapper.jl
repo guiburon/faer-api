@@ -6,7 +6,7 @@ export mult!
 using Libdl
 using LinearAlgebra
 
-lib = dlopen("target/debug/libfaer_api.so")
+lib = dlopen("target/release/libfaer_api.so")
 fun_make_zero = dlsym(lib, "make_zero")
 fun_mult = dlsym(lib, "mult")
 
