@@ -10,6 +10,9 @@ using BenchmarkTools
 include("wrapper.jl")
 using .faer
 
+using Random
+Random.seed!(314)
+
 ma = 20_000
 na = 8_000
 
