@@ -1,15 +1,13 @@
-nthreads = Base.Threads.nthreads()
-
-ENV["OPENBLAS_NUM_THREADS"] = nthreads
-ENV["OMP_NUM_THREADS"] = nthreads
-ENV["MKL_NUM_THREADS"] = nthreads
-
 using LinearAlgebra
-using BenchmarkTools
+
+nthreads = Base.Threads.nthreads()
+BLAS.set_num_threads(nthreads)
+ENV["MKL_NUM_THREADS"] = nthreads
 
 include("wrapper.jl")
 using .faer
 
+using BenchmarkTools
 using Random
 Random.seed!(314)
 
