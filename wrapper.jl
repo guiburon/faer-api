@@ -1,20 +1,14 @@
 module faer
 
-export make_zero!
 export mult!
 
-using Libdl
+using Libdl # dynamic linker
 using LinearAlgebra
 
-lib = dlopen("target/release/libfaer_api.so")
-fun_make_zero = dlsym(lib, "make_zero")
-fun_mult = dlsym(lib, "mult")
+lib = dlopen("target/release/libfaer_api.so") # lib pointer
+fun_mult = dlsym(lib, "mult") # function pointer
 
-function make_zero!(a::StridedMatrix{Float64})
-  ccall(fun_make_zero, Cvoid, (Ptr{Cdouble}, Culonglong, Culonglong, Culonglong, Culonglong), a, size(a)[1], size(a)[2], strides(a)[1], strides(a)[2])
-  return a
-end
-
+# size and strides cost is negligeable
 function mult!(c::T, a::T, b::T; nthreads::Integer=Base.Threads.nthreads()) where {T<:StridedMatrix{<:Float64}}
   (size(a)[2] == size(b)[1]) || throw(DimensionMismatch("a versus b"))
   (size(c) == (size(a)[1], size(b)[2])) || throw(DimensionMismatch("c versus a and b"))
