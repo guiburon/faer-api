@@ -20,6 +20,11 @@ nb = 4_000
 a = rand(Float64, ma, na)
 b = rand(Float64, mb, nb)
 
+# --- faer ---
+println("--- faer ---")
+c = Matrix{Float64}(undef, ma, nb)
+@btime mult!($c, $a, $b; nthreads=$nthreads)
+
 # --- OpenBLAS ---
 println("--- OpenBLAS ---")
 c = Matrix{Float64}(undef, ma, nb)
@@ -30,9 +35,4 @@ using MKL
 println("--- MKL ---")
 c = Matrix{Float64}(undef, ma, nb)
 @btime mul!($c, $a, $b)
-
-# --- faer ---
-println("--- faer ---")
-c = Matrix{Float64}(undef, ma, nb)
-@btime mult!($c, $a, $b; nthreads=$nthreads)
 
