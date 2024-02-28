@@ -25,6 +25,12 @@ println("--- faer ---")
 c = Matrix{Float64}(undef, ma, nb)
 @btime mult!($c, $a, $b; nthreads=$nthreads)
 
+# --- Octavian ---
+using Octavian
+println("--- Octavian ---")
+c = Matrix{Float64}(undef, ma, nb)
+@btime matmul!($c, $a, $b)
+
 # --- OpenBLAS ---
 println("--- OpenBLAS ---")
 c = Matrix{Float64}(undef, ma, nb)
